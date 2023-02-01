@@ -1,11 +1,13 @@
 import tkinter as tk
 from tkinter import font
 
+from game_logic import *
 
 class Board(tk.Tk):
-    def __init__(self):
+    def __init__(self, game):
         super().__init__()
-        # self.display = None
+        self.game = game
+        self.display = None
         self.title("TicTacToe")
         self.tiles = {}
         self.create_main_window()
@@ -38,6 +40,7 @@ class Board(tk.Tk):
                     highlightbackground="lightblue",
                 )
                 self.tiles[button] = (row, col)
+                button.bind("<ButtonPress-1>", self.play)
                 button.grid(
                     row=row,
                     column=col,
@@ -46,12 +49,36 @@ class Board(tk.Tk):
                     sticky="nsew"
                 )
 
+    def update_button(self, button):
+        button.config(text=self.game.current_player.label)
+        button.config(fg=self.game.current_player.colour)
 
-def main():
-    """Create the game's board and run its main loop."""
-    board = Board()
-    board.mainloop()
+    def update_display(self, msg, colour="black"):
+        self.display["text"] = msg
+        self.display["fg"] = colour
+
+    def highlight_cells(self):
+        for button, coordinates in self.tiles.items():
+            if coordinates in self.game.winner_combo:
+                button.config(highlightbackground="red")
+
+    def play(self, event):
+        button = event.widget
+        row, col = self.tiles[button]
+        move = Move(row, col, self.game.current_player.label)
+        if self.game.is_move_valid(move):
+            self.update_button(button)
+            self.game.perform_action(move)
+            if self.game.is_tied():
+                self.update_display(msg="Tied game!", colour="red")
+            elif self.game.has_winner:
+                self.highlight_cells()
+                msg = f'Player "{self.game.current_player.label}" won!'
+                colour = self.game.current_player.colour
+                self.update_display(msg, colour)
+            else:
+                self.game.next_player()
+                msg = f"{self.game.current_player.label}'s turn"
+                self.update_display(msg)
 
 
-if __name__ == "__main__":
-    main()
