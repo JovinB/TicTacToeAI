@@ -20,9 +20,9 @@ DEFAULT_PLAYERS = (
 
 
 class Game:
-    def __init__(self, players=DEFAULT_PLAYERS, board_size=3):
+    def __init__(self, players=DEFAULT_PLAYERS):
         self.players = cycle(players)
-        self.board_size = board_size
+        self.board_size = 3
         self.current_player = next(self.players)
         self.winner_combo = []
         self.current_moves = []
@@ -36,3 +36,16 @@ class Game:
             for row in range(self.board_size)
         ]
         self.winning_combos = self.get_winning_combos()
+
+    def get_winning_combos(self):
+        rows = [
+            [(move.row, move.col) for move in row]
+            for row in self.current_moves
+        ]
+        columns = [list(col) for col in zip(*rows)]
+        first_diagonal = [row[i] for i, row in enumerate(rows)]
+        second_diagonal = [col[j] for j, col in enumerate(reversed(columns))]
+        return rows + columns + [first_diagonal, second_diagonal]
+
+
+game = Game()
