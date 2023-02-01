@@ -40,6 +40,7 @@ class Board(tk.Tk):
                     highlightbackground="lightblue",
                 )
                 self.tiles[button] = (row, col)
+                button.bind("<ButtonPress-1>", self.play)
                 button.grid(
                     row=row,
                     column=col,
