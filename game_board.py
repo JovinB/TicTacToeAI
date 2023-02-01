@@ -1,10 +1,12 @@
 import tkinter as tk
 from tkinter import font
 
+from game_logic import *
 
 class Board(tk.Tk):
-    def __init__(self):
+    def __init__(self, game):
         super().__init__()
+        self.game = game
         self.display = None
         self.title("TicTacToe")
         self.tiles = {}
@@ -45,6 +47,25 @@ class Board(tk.Tk):
                     pady=5,
                     sticky="nsew"
                 )
+
+    def play(self, event):
+        button = event.widget
+        row, col = self.tiles[button]
+        move = Move(row, col, self.game.current_player.label)
+        if self.game.is_move_valid(move):
+            self.update_button(button)
+            self.game.perform_action(move)
+            if self.game.is_tied():
+                self.update_display(msg="Tied game!", color="red")
+            elif self.game.has_winner:
+                self.highlight_cells()
+                msg = f'Player "{self.game.current_player.label}" won!'
+                color = self.game.current_player.color
+                self.update_display(msg, color)
+            else:
+                self.game.next_player()
+                msg = f"{self.game.current_player.label}'s turn"
+                self.update_display(msg)
 
 
 def main():
