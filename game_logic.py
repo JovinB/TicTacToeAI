@@ -53,4 +53,29 @@ class Game:
         no_winner = not self.has_winner
         return no_winner and move_was_not_played
 
+    def perform_action(self, move):
+        row, col, label = move.row, move.col, move.label
+        self.current_moves[row][col] = move
+
+        for combo in self.winning_combos:
+            won = True
+            for r, c in combo:
+                if self.current_moves[r][c].label != label:
+                    won = False
+            if won:
+                self.has_winner = True
+                self.winner_combo = combo
+                break
+
+    def is_tied(self):
+        no_winner = not self.has_winner
+        played_moves = (
+            move.label for row in self.current_moves for move in row
+        )
+        return no_winner and all(played_moves)
+
+    def next_player(self):
+        self.current_player = next(self.players)
+
+
 game = Game()
