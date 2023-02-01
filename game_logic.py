@@ -47,5 +47,10 @@ class Game:
         second_diagonal = [col[j] for j, col in enumerate(reversed(columns))]
         return rows + columns + [first_diagonal, second_diagonal]
 
+    def is_move_valid(self, move):
+        row, col = move.row, move.col
+        move_was_not_played = self.current_moves[row][col].label == ""
+        no_winner = not self.has_winner
+        return no_winner and move_was_not_played
 
 game = Game()
