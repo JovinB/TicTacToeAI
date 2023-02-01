@@ -5,7 +5,7 @@ from tkinter import font
 class Board(tk.Tk):
     def __init__(self):
         super().__init__()
-        # self.display = None
+        self.display = None
         self.title("TicTacToe")
         self.tiles = {}
         self.create_main_window()
