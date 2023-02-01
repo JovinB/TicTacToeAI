@@ -10,8 +10,21 @@ class Board(tk.Tk):
         self.display = None
         self.title("TicTacToe")
         self.tiles = {}
+        self.create_menu()
         self.create_main_window()
         self.create_board()
+
+    def create_menu(self):
+        menu_bar = tk.Menu(master=self)
+        self.config(menu=menu_bar)
+        file_menu = tk.Menu(master=menu_bar)
+        file_menu.add_command(
+            label="Play Again",
+            command=self.reset_board
+        )
+        file_menu.add_separator()
+        file_menu.add_command(label="Exit", command=quit)
+        menu_bar.add_cascade(label="File", menu=file_menu)
 
     def create_main_window(self):
         display_frame = tk.Frame(master=self)
@@ -81,4 +94,10 @@ class Board(tk.Tk):
                 msg = f"{self.game.current_player.label}'s turn"
                 self.update_display(msg)
 
-
+    def reset_board(self):
+        self.game.reset_game()
+        self.update_display(msg="Ready?")
+        for button in self.tiles.keys():
+            button.config(highlightbackground="lightblue")
+            button.config(text="")
+            button.config(fg="black")
