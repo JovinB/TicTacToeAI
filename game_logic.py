@@ -77,5 +77,12 @@ class Game:
     def next_player(self):
         self.current_player = next(self.players)
 
+    def reset_game(self):
+        for row, row_content in enumerate(self.current_moves):
+            for col, _ in enumerate(row_content):
+                row_content[col] = Move(row, col)
+        self.has_winner = False
+        self.winner_combo = []
+
 
 game = Game()
