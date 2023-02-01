@@ -49,6 +49,19 @@ class Board(tk.Tk):
                     sticky="nsew"
                 )
 
+    def update_button(self, button):
+        button.config(text=self.game.current_player.label)
+        button.config(fg=self.game.current_player.colour)
+
+    def update_display(self, msg, colour="black"):
+        self.display["text"] = msg
+        self.display["fg"] = colour
+
+    def highlight_cells(self):
+        for button, coordinates in self.tiles.items():
+            if coordinates in self.game.winner_combo:
+                button.config(highlightbackground="red")
+
     def play(self, event):
         button = event.widget
         row, col = self.tiles[button]
@@ -57,23 +70,15 @@ class Board(tk.Tk):
             self.update_button(button)
             self.game.perform_action(move)
             if self.game.is_tied():
-                self.update_display(msg="Tied game!", color="red")
+                self.update_display(msg="Tied game!", colour="red")
             elif self.game.has_winner:
                 self.highlight_cells()
                 msg = f'Player "{self.game.current_player.label}" won!'
-                color = self.game.current_player.color
-                self.update_display(msg, color)
+                colour = self.game.current_player.colour
+                self.update_display(msg, colour)
             else:
                 self.game.next_player()
                 msg = f"{self.game.current_player.label}'s turn"
                 self.update_display(msg)
 
 
-def main():
-    """Create the game's board and run its main loop."""
-    board = Board()
-    board.mainloop()
-
-
-if __name__ == "__main__":
-    main()
