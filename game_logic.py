@@ -27,6 +27,7 @@ class Game:
         self.winner_combo = []
         self.current_moves = []
         self.has_winner = False
+        self.winner = ""
         self.winning_combos = []
         self.setup_board()
 
@@ -53,19 +54,97 @@ class Game:
         no_winner = not self.has_winner
         return no_winner and move_was_not_played
 
+    def isWinner(self, board, currentPlayer):
+        for combo in self.winning_combos:
+            won = True
+            for r, c in combo:
+                if board[r][c].label != currentPlayer:
+                    won = False
+
+            if won:
+                return True, combo
+        return False, None
+
     def perform_action(self, move):
         row, col, label = move.row, move.col, move.label
         self.current_moves[row][col] = move
 
-        for combo in self.winning_combos:
-            won = True
-            for r, c in combo:
-                if self.current_moves[r][c].label != label:
-                    won = False
-            if won:
-                self.has_winner = True
-                self.winner_combo = combo
-                break
+        returnVal = self.isWinner(self.current_moves, self.current_player.label)
+
+        if returnVal[0]:
+            self.has_winner = True
+            self.winner = self.current_player.label
+            self.winner_combo = returnVal[1]
+
+    def ai_move(self):
+        bestScore = -1
+        bestMove = ()
+        for row in range(3):
+            for col in range(3):
+                if self.current_moves[row][col].label == "":
+
+                    self.current_moves[row][col] = Move(row,col,self.current_player.label)
+                    score = self.findBestMove(self.current_moves, 0, False)
+                    self.current_moves[row][col] = Move(row,col,"")
+
+                    if score > bestScore:
+                        bestScore = score
+                        bestMove = (row,col)
+
+        move = Move(bestMove[0], bestMove[1], self.current_player.label)
+        self.current_moves[bestMove[0]][bestMove[1]] = move
+
+        returnVal = self.isWinner(self.current_moves, self.current_player.label)
+
+        if returnVal[0]:
+            self.has_winner = True
+            self.winner = self.current_player.label
+            self.winner_combo = returnVal[1]
+
+        return move
+
+    def findBestMove(self, board, depth, isMax):
+        if isMax:
+            returnVal = self.isWinner(board, "X")
+        else:
+            returnVal = self.isWinner(board, "O")
+
+        # if it's max turn, then if there is a winner, the winner is min, as max has not made their move yet
+        if returnVal[0]:
+            if isMax:
+                return -1
+            else:
+                return 1
+        elif self.is_tied():
+            return 0
+
+        # ai's turn (max turn)
+        if isMax:
+            maxScore = -1
+            for row in range(3):
+                for col in range(3):
+                    if board[row][col].label == "":
+                        board[row][col] = Move(row, col, "O")
+                        score = self.findBestMove(self.current_moves, depth+1, False)
+                        board[row][col] = Move(row, col, "")
+
+                        maxScore = max(score, maxScore)
+
+            return maxScore
+
+        # player's turn (min turn)
+        else:
+            minScore = 1
+            for row in range(3):
+                for col in range(3):
+                    if board[row][col].label == "":
+                        board[row][col] = Move(row, col, "X")
+                        score = self.findBestMove(self.current_moves, depth+1, True)
+                        board[row][col] = Move(row, col, "")
+
+                        minScore = min(score, minScore)
+
+            return minScore
 
     def is_tied(self):
         no_winner = not self.has_winner
@@ -83,6 +162,3 @@ class Game:
                 row_content[col] = Move(row, col)
         self.has_winner = False
         self.winner_combo = []
-
-
-game = Game()
