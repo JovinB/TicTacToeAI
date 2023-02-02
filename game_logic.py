@@ -27,6 +27,7 @@ class Game:
         self.winner_combo = []
         self.current_moves = []
         self.has_winner = False
+        self.winner = ""
         self.winning_combos = []
         self.setup_board()
 
@@ -72,10 +73,10 @@ class Game:
 
         if returnVal[0]:
             self.has_winner = True
+            self.winner = self.current_player.label
             self.winner_combo = returnVal[1]
 
     def ai_move(self):
-        print("AI's turn")
         bestScore = -1
         bestMove = ()
         for row in range(3):
@@ -86,8 +87,6 @@ class Game:
                     score = self.findBestMove(self.current_moves, 0, False)
                     self.current_moves[row][col] = Move(row,col,"")
 
-                    print("Row:{}, Col:{}".format(row,col))
-                    print(score)
                     if score > bestScore:
                         bestScore = score
                         bestMove = (row,col)
@@ -99,6 +98,7 @@ class Game:
 
         if returnVal[0]:
             self.has_winner = True
+            self.winner = self.current_player.label
             self.winner_combo = returnVal[1]
 
         return move
@@ -162,8 +162,3 @@ class Game:
                 row_content[col] = Move(row, col)
         self.has_winner = False
         self.winner_combo = []
-        if self.current_player.label == "O":
-            self.next_player()
-
-
-game = Game()

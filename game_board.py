@@ -84,6 +84,7 @@ class Board(tk.Tk):
             self.game.perform_action(move)
             if self.game.is_tied():
                 self.update_display(msg="Tied game!", colour="red")
+                self.game.winner = ""
             elif self.game.has_winner:
                 self.highlight_cells()
                 msg = f'Player "{self.game.current_player.label}" won!'
@@ -115,3 +116,11 @@ class Board(tk.Tk):
             button.config(highlightbackground="lightblue")
             button.config(text="")
             button.config(fg="black")
+        if self.game.winner == "X":
+            self.game.next_player()
+            self.ai_turn()
+        else:
+            self.game.next_player()
+            if self.game.current_player.label == "O":
+                self.ai_turn()
+        self.game.winner = ""
