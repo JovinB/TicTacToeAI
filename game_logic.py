@@ -67,6 +67,38 @@ class Game:
                 self.winner_combo = combo
                 break
 
+    def ai_move(self):
+        bestScore = -1
+        bestMove = ()
+        for row in range(3):
+            for col in range(3):
+                if self.current_moves[row][col].label == "":
+                    self.current_moves[row][col] = Move(row,col,self.current_player.label)
+                    score = self.findBestMove(self.current_moves)
+                    self.current_moves[row][col] = Move(row,col,"")
+
+                    if score > bestScore:
+                        bestScore = score
+                        bestMove = (row,col)
+
+        move = Move(bestMove[0], bestMove[1], self.current_player.label)
+        self.current_moves[bestMove[0]][bestMove[1]] = move
+
+        for combo in self.winning_combos:
+            won = True
+            for r, c in combo:
+                if self.current_moves[r][c].label != move.label:
+                    won = False
+            if won:
+                self.has_winner = True
+                self.winner_combo = combo
+                break
+
+        return move
+
+    def findBestMove(self, board):
+        return 1
+
     def is_tied(self):
         no_winner = not self.has_winner
         played_moves = (

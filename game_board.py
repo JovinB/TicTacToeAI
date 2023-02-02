@@ -91,8 +91,22 @@ class Board(tk.Tk):
                 self.update_display(msg, colour)
             else:
                 self.game.next_player()
-                msg = f"{self.game.current_player.label}'s turn"
-                self.update_display(msg)
+                self.ai_turn()
+
+    def ai_turn(self):
+        move = self.game.ai_move()
+        button = [b for b, coords in self.tiles.items() if coords == (move.row, move.col)][0]
+        self.update_button(button)
+
+        if self.game.is_tied():
+            self.update_display(msg="Tied game!", colour="red")
+        elif self.game.has_winner:
+            self.highlight_cells()
+            msg = f'Player "{self.game.current_player.label}" won!'
+            colour = self.game.current_player.colour
+            self.update_display(msg, colour)
+        else:
+            self.game.next_player()
 
     def reset_board(self):
         self.game.reset_game()
