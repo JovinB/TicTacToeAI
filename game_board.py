@@ -3,6 +3,7 @@ from tkinter import font
 
 from game_logic import *
 
+
 class Board(tk.Tk):
     def __init__(self, game):
         super().__init__()

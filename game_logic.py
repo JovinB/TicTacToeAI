@@ -54,11 +54,11 @@ class Game:
         no_winner = not self.has_winner
         return no_winner and move_was_not_played
 
-    def isWinner(self, board, currentPlayer):
+    def isWinner(self, board, current_player):
         for combo in self.winning_combos:
             won = True
             for r, c in combo:
-                if board[r][c].label != currentPlayer:
+                if board[r][c].label != current_player:
                     won = False
 
             if won:
@@ -69,12 +69,12 @@ class Game:
         row, col, label = move.row, move.col, move.label
         self.current_moves[row][col] = move
 
-        returnVal = self.isWinner(self.current_moves, self.current_player.label)
+        return_val = self.isWinner(self.current_moves, self.current_player.label)
 
-        if returnVal[0]:
+        if return_val[0]:
             self.has_winner = True
             self.winner = self.current_player.label
-            self.winner_combo = returnVal[1]
+            self.winner_combo = return_val[1]
 
     def ai_move(self):
         bestScore = -1
